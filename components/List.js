@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import {
   StyleSheet,
   View,
@@ -10,37 +10,65 @@ import {
   Image,
 } from 'react-native'
 import ListItem from './ListItem'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 export default function List() {
   const [list, setList] = useState([])
   const [input, setInput] = useState('')
+
+  useEffect(() => {
+    async function get() {
+      const store = await getData()
+      setList(store)
+    }
+    get()
+  }, [])
+
+  const storeData = async (value) => {
+    try {
+      const jsonValue = JSON.stringify(value)
+      await AsyncStorage.setItem('@list', jsonValue)
+    } catch (e) {
+      console.log(e)
+    }
+  }
+  const getData = async () => {
+    try {
+      const jsonValue = await AsyncStorage.getItem('@list')
+      return jsonValue != null ? JSON.parse(jsonValue) : []
+    } catch (e) {
+      console.log(e)
+      return []
+    }
+  }
+  const updateList = (value) => {
+    setList(value)
+    storeData(value)
+  }
   const changeItem = (value, item) => {
-    setList((prewList) => {
-      return prewList.map((el) => {
-        if (el.id === item.id) {
-          return { ...el, checked: value }
-        } else return el
-      })
+    const newList = list.map((el) => {
+      if (el.id === item.id) {
+        return { ...el, checked: value }
+      } else return el
     })
+    updateList(newList)
   }
   const deleteItem = (item) => {
-    setList((prewList) => {
-      return prewList.filter((el) => el.id !== item.id)
-    })
+    const newList = list.filter((el) => el.id !== item.id)
+    updateList(newList)
   }
   const addItem = () => {
     if (!input.trim()) return
-    setList((prewList) => {
-      return [
-        ...prewList,
-        {
-          id: Math.random().toString(),
-          title: input,
-          checked: false,
-          description: '',
-        },
-      ]
-    })
+    const newList = [
+      ...list,
+      {
+        id: Math.random().toString(),
+        title: input,
+        checked: false,
+        description: '',
+      },
+    ]
+    updateList(newList)
     setInput('')
   }
   const renderItem = (item) => {
