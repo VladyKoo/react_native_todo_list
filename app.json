@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "rn_first_prj",
-    "slug": "rn_first_prj",
+    "name": "rn_todo_list",
+    "slug": "rn_todo_list",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -23,7 +23,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
-      }
+      },
+      "package": "com.vladykoo.rn_todo_list"
     },
     "web": {
       "favicon": "./assets/favicon.png"
